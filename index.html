@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบลงทะเบียน Size เสื้อแจ็คเก็ต BCH</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS/JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { 
+            background-color: #f4f7f6; 
+            font-family: 'Sarabun', sans-serif;
+        }
+        .app-container { 
+            max-width: 500px; 
+            margin: 20px auto; 
+            background: #ffffff; 
+            padding: 30px 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        }
+        .bch-logo { 
+            max-width: 130px; 
+            display: block; 
+            margin: 0 auto 20px auto; 
+        }
+        .jacket-preview { 
+            width: 100%; 
+            border-radius: 8px; 
+            margin-top: 25px; 
+            border: 1px solid #e0e0e0;
+        }
+        .form-label { font-weight: 600; color: #333; }
+        .btn-custom { background-color: #0d6efd; color: white; font-weight: bold; border-radius: 8px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-container">
+            <!-- ใส่ URL รูปโลโก้ BCH ที่นี่ -->
+            <img src="https://tain6666.github.io/bch.github.io/pic/LOGOBCH2025.png" alt="BCH Logo" class="bch-logo">
+            
+            <h4 class="text-center mb-4 text-primary fw-bold">ระบบลงทะเบียน Size เสื้อแจ็คเก็ต BCH</h4>
+
+            <form id="jacketForm">
+                <div class="mb-3">
+                    <label class="form-label">รหัสพนักงาน (ไม่เกิน 6 หลัก)</label>
+                    <input type="text" id="empId" class="form-control" maxlength="6" pattern="\d*" placeholder="ระบุรหัสพนักงาน" required>
+                    <div class="form-text text-muted">ตัวอย่าง: 012345 (หากมี 0 นำหน้าให้ใส่ด้วย)</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">ชื่อ-สกุล</label>
+                    <input type="text" id="name" class="form-control" placeholder="ระบุชื่อ-นามสกุล" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">สายงาน</label>
+                    <select id="division" class="form-select" required>
+                        <option value="" disabled selected>กำลังโหลดข้อมูลสายงาน...</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">หน่วยงาน</label>
+                    <select id="department" class="form-select" required disabled>
+                        <option value="" disabled selected>กรุณาเลือกสายงานก่อน</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Size เสื้อแจ็คเก็ต</label>
+                    <select id="size" class="form-select" required>
+                        <option value="" disabled selected>กรุณาเลือก Size</option>
+                        <option value="S">size S (อก 42 ความยาวเสื้อ 24)</option>
+                        <option value="M">size M (อก 44 ความยาวเสื้อ 25)</option>
+                        <option value="L">size L (อก 45 ความยาวเสื้อ 26)</option>
+                        <option value="XL">size XL (อก 47 ความยาวเสื้อ 27)</option>
+                        <option value="2XL">size 2XL (อก 49 ความยาวเสื้อ 28)</option>
+                        <option value="3XL">size 3XL (อก 52 ความยาวเสื้อ 29)</option>
+                        <option value="4XL">size 4XL (อก 54 ความยาวเสื้อ 30)</option>
+                        <option value="5XL">size 5XL (อก 56 ความยาวเสื้อ 31)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-custom w-100 py-2 mt-2">ยืนยันการลงทะเบียน</button>
+            </form>
+
+            <!-- ใส่ URL รูปแบบเสื้อแจ็คเก็ต ที่นี่ -->
+            <img src="https://via.placeholder.com/400x300?text=Jacket+Preview" alt="รูปแบบ Jacket" class="jacket-preview">
+        </div>
+    </div>
+
+    <script>
+        // นำ URL ของ Web App ที่ได้จาก Google Apps Script มาใส่ตรงนี้
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNkJGVajh-lSWBdYC21wXb-BFYNvzEvU8zUi95HzISZ-PnXU6-E2PpmeEDSCe_rdSW/exec'; 
+        let listData = {};
+
+        // โหลดข้อมูลสายงานทันทีที่เปิดหน้าเว็บ
+        window.onload = async () => {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                listData = await response.json();
+
+                const divisionSelect = document.getElementById('division');
+                divisionSelect.innerHTML = '<option value="" disabled selected>เลือกสายงาน</option>';
+
+                // นำข้อมูลสายงานมาสร้างเป็น Dropdown
+                for (const div in listData) {
+                    let option = document.createElement('option');
+                    option.value = div;
+                    option.textContent = div;
+                    divisionSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error('Error fetching list data:', error);
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูลสายงานได้', 'error');
+            }
+        };
+
+        // เมื่อเลือกสายงาน ให้เปิดและอัปเดตข้อมูลหน่วยงานที่เกี่ยวข้อง
+        document.getElementById('division').addEventListener('change', function() {
+            const deptSelect = document.getElementById('department');
+            const selectedDiv = this.value;
+
+            deptSelect.innerHTML = '<option value="" disabled selected>เลือกหน่วยงาน</option>';
+            deptSelect.disabled = false;
+
+            if (listData[selectedDiv]) {
+                listData[selectedDiv].forEach(dept => {
+                    let option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    deptSelect.appendChild(option);
+                });
+            }
+        });
+
+        // จัดการเมื่อกด Submit ฟอร์ม
+        document.getElementById('jacketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // ดึงข้อมูลจากฟอร์ม
+            const empId = document.getElementById('empId').value;
+            const name = document.getElementById('name').value;
+            const division = document.getElementById('division').value;
+            const department = document.getElementById('department').value;
+            const size = document.getElementById('size').value;
+
+            // แสดงหน้าโหลด SweetAlert
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ empId, name, division, department, size })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกสำเร็จ!',
+                        text: result.message,
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#0d6efd'
+                    }).then(() => {
+                        // รีเซ็ตฟอร์มหลังจากบันทึกเสร็จ
+                        document.getElementById('jacketForm').reset();
+                        document.getElementById('department').disabled = true;
+                        document.getElementById('department').innerHTML = '<option value="" disabled selected>กรุณาเลือกสายงานก่อน</option>';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'พบข้อมูลซ้ำ',
+                        text: result.message,
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                Swal.fire('ข้อผิดพลาด', 'ระบบไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
