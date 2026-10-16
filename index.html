@@ -19,19 +19,19 @@
     <style>
         body { 
             background-color: #f4f7f6; 
-            /* เปลี่ยนมาใช้ฟอนต์ Prompt */
             font-family: 'Prompt', sans-serif;
+            font-size: 16px; /* ปรับขนาดฟอนต์พื้นฐานให้ใหญ่ขึ้น */
         }
         .app-container { 
-            max-width: 500px; 
+            max-width: 550px; /* ขยายกล่องให้กว้างขึ้นเล็กน้อยรับกับฟอนต์ */
             margin: 20px auto; 
             background: #ffffff; 
-            padding: 30px 20px; 
+            padding: 30px 25px; 
             border-radius: 15px; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.08); 
         }
         .bch-logo { 
-            max-width: 130px; 
+            max-width: 140px; 
             display: block; 
             margin: 0 auto 20px auto; 
         }
@@ -45,20 +45,20 @@
         .form-label { 
             font-weight: 500; 
             color: #2c3e50; 
-            font-size: 0.95rem;
+            font-size: 1.15rem; /* ปรับฟอนต์หัวข้อให้ใหญ่และชัดเจน */
         }
         .form-control, .form-select {
             border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 0.95rem;
+            padding: 12px 15px; /* เพิ่มพื้นที่ในช่องกรอกให้กดง่ายขึ้นบนมือถือ */
+            font-size: 1.1rem; /* ปรับฟอนต์ในช่องกรอกให้ใหญ่ขึ้น */
         }
         .btn-custom { 
             background-color: #0d6efd; 
             color: white; 
             font-weight: 600; 
             border-radius: 10px;
-            padding: 12px;
-            font-size: 1.05rem;
+            padding: 14px;
+            font-size: 1.25rem; /* ปรับฟอนต์ปุ่มกดให้ใหญ่และเด่นชัด */
             transition: all 0.3s ease;
         }
         .btn-custom:hover {
@@ -66,10 +66,15 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
         }
+        .btn-custom:disabled {
+            background-color: #6c757d;
+            transform: none;
+            box-shadow: none;
+        }
         .title-text {
             color: #0d6efd;
             font-weight: 700;
-            font-size: 1.4rem;
+            font-size: 1.6rem; /* ปรับหัวเรื่องให้ใหญ่ขึ้น */
             letter-spacing: 0.5px;
         }
     </style>
@@ -77,7 +82,6 @@
 <body>
     <div class="container">
         <div class="app-container">
-            <!-- ใส่ URL รูปโลโก้ BCH ที่นี่ -->
             <img src="https://tain6666.github.io/bch.github.io/pic/LOGOBCH2025.png" alt="BCH Logo" class="bch-logo">
             
             <h4 class="text-center mb-4 title-text">ระบบลงทะเบียน Size เสื้อแจ็คเก็ต BCH</h4>
@@ -85,8 +89,9 @@
             <form id="jacketForm">
                 <div class="mb-3">
                     <label class="form-label">รหัสพนักงานหรือรหัสแพทย์</label>
-                    <input type="text" id="empId" class="form-control" maxlength="6" pattern="\d*" placeholder="ระบุรหัสพนักงาน" required>
-                    <div class="form-text text-muted" style="font-size: 0.8rem;">ตัวอย่าง: 012345 (หากมี 0 นำหน้าให้ใส่ด้วย)หรือ Dxxxxx</div>
+                    <!-- นำ pattern="\d*" ออก เพื่อให้สามารถพิมพ์ตัวอักษร D สำหรับรหัสแพทย์ได้ -->
+                    <input type="text" id="empId" class="form-control" maxlength="6" placeholder="ระบุรหัสพนักงาน" required>
+                    <div class="form-text text-muted" style="font-size: 0.95rem;">ตัวอย่าง: 012345 (หากมี 0 นำหน้าให้ใส่ด้วย) หรือ Dxxxxx</div>
                 </div>
                 
                 <div class="mb-3">
@@ -123,20 +128,17 @@
                     </select>
                 </div>
                 
-                <button type="submit" class="btn btn-custom w-100 py-2 mt-3">ยืนยันการลงทะเบียน</button>
+                <button type="submit" id="submitBtn" class="btn btn-custom w-100 py-2 mt-3">ยืนยันการลงทะเบียน</button>
             </form>
 
-            <!-- ใส่ URL รูปแบบเสื้อแจ็คเก็ต ที่นี่ -->
             <img src="https://raw.githubusercontent.com/Tain6666/jacket2026/refs/heads/main/j2026.jpg" alt="รูปแบบ Jacket" class="jacket-preview">
         </div>
     </div>
 
     <script>
-        // นำ URL ของ Web App ที่ได้จาก Google Apps Script มาใส่ตรงนี้
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNkJGVajh-lSWBdYC21wXb-BFYNvzEvU8zUi95HzISZ-PnXU6-E2PpmeEDSCe_rdSW/exec'; 
         let listData = {};
 
-        // โหลดข้อมูลสายงานทันทีที่เปิดหน้าเว็บ
         window.onload = async () => {
             try {
                 const response = await fetch(SCRIPT_URL);
@@ -145,7 +147,6 @@
                 const divisionSelect = document.getElementById('division');
                 divisionSelect.innerHTML = '<option value="" disabled selected>เลือกสายงาน</option>';
 
-                // นำข้อมูลสายงานมาสร้างเป็น Dropdown
                 for (const div in listData) {
                     let option = document.createElement('option');
                     option.value = div;
@@ -156,15 +157,14 @@
                 console.error('Error fetching list data:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'ข้อผิดพลาด',
-                    text: 'ไม่สามารถเชื่อมต่อฐานข้อมูลสายงานได้',
-                    confirmButtonText: 'ตกลง',
+                    title: '<span style="font-family: \'Prompt\', sans-serif;">ข้อผิดพลาด</span>',
+                    html: '<span style="font-family: \'Prompt\', sans-serif;">ไม่สามารถเชื่อมต่อฐานข้อมูลสายงานได้</span>',
+                    confirmButtonText: '<span style="font-family: \'Prompt\', sans-serif;">ตกลง</span>',
                     confirmButtonColor: '#0d6efd'
                 });
             }
         };
 
-        // เมื่อเลือกสายงาน ให้เปิดและอัปเดตข้อมูลหน่วยงานที่เกี่ยวข้อง
         document.getElementById('division').addEventListener('change', function() {
             const deptSelect = document.getElementById('department');
             const selectedDiv = this.value;
@@ -182,22 +182,25 @@
             }
         });
 
-        // จัดการเมื่อกด Submit ฟอร์ม
         document.getElementById('jacketForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'กำลังประมวลผล...';
 
-            // ดึงข้อมูลจากฟอร์ม
             const empId = document.getElementById('empId').value;
             const name = document.getElementById('name').value;
             const division = document.getElementById('division').value;
             const department = document.getElementById('department').value;
             const size = document.getElementById('size').value;
 
-            // แสดงหน้าโหลด SweetAlert พร้อมกำหนดฟอนต์ให้เข้ากัน
+            // ปรับแต่ง SweetAlert ให้โหลดเร็วขึ้นและปิด Animation บางส่วนเพื่อความไว
             Swal.fire({
-                title: '<span style="font-family: \'Prompt\', sans-serif;">กำลังบันทึกข้อมูล...</span>',
+                title: '<span style="font-family: \'Prompt\', sans-serif;">กำลังตรวจสอบข้อมูล...</span>',
                 html: '<span style="font-family: \'Prompt\', sans-serif;">กรุณารอสักครู่</span>',
                 allowOutsideClick: false,
+                animation: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
@@ -218,7 +221,6 @@
                         confirmButtonText: '<span style="font-family: \'Prompt\', sans-serif;">ตกลง</span>',
                         confirmButtonColor: '#0d6efd'
                     }).then(() => {
-                        // รีเซ็ตฟอร์มหลังจากบันทึกเสร็จ
                         document.getElementById('jacketForm').reset();
                         document.getElementById('department').disabled = true;
                         document.getElementById('department').innerHTML = '<option value="" disabled selected>กรุณาเลือกสายงานก่อน</option>';
@@ -241,6 +243,10 @@
                     confirmButtonText: '<span style="font-family: \'Prompt\', sans-serif;">ตกลง</span>',
                     confirmButtonColor: '#0d6efd'
                 });
+            } finally {
+                // คืนสถานะปุ่มกลับมาเมื่อประมวลผลเสร็จสิ้น
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'ยืนยันการลงทะเบียน';
             }
         });
     </script>
